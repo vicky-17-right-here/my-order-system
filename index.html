@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12/20 甜點訂購</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #fffaf0; margin: 0; padding: 20px; color: #5a4a42; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #d35400; margin-bottom: 20px; }
+        
+        /* 表單區域 */
+        .form-section { margin-bottom: 30px; padding: 15px; background-color: #fff5e6; border-radius: 10px; border: 1px solid #ffe0b2; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        select:invalid { color: #999; }
+        
+        /* 產品列表網格 */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .product-card { border: 1px solid #eee; border-radius: 10px; overflow: hidden; padding-bottom: 10px; text-align: center; transition: transform 0.2s; background: #fff; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .product-img { width: 100%; height: 150px; object-fit: cover; background-color: #f0f0f0; }
+        .product-info { padding: 10px; height: 80px; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-name { font-size: 14px; font-weight: bold; margin-bottom: 5px; line-height: 1.3; }
+        .product-price { color: #e67e22; font-weight: bold; }
+        
+        .qty-control { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 5px; }
+        .btn-qty { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 18px; line-height: 1; color: #555; }
+        .qty-input { width: 40px; text-align: center; border: none; font-size: 16px; font-weight: bold; color: #333; pointer-events: none; }
+        
+        /* 底部懸浮列 */
+        .footer-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #ddd; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); box-sizing: border-box; z-index: 100; }
+        .total-display { font-size: 18px; font-weight: bold; color: #d35400; }
+        .btn-submit { background-color: #e67e22; color: white; border: none; padding: 10px 30px; border-radius: 25px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        
+        .spacer { height: 80px; } 
+
+        /* 彈出視窗樣式 */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-box {
+            background: white; padding: 25px; border-radius: 12px;
+            width: 90%; max-width: 400px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; gap: 10px; /* 增加間距 */
+        }
+        .modal-title { font-size: 22px; color: #27ae60; margin-bottom: 5px; font-weight: bold; }
+        .copy-area {
+            width: 100%; height: 120px; padding: 10px;
+            background-color: #f8f9fa; border: 1px solid #ddd;
+            border-radius: 5px; font-size: 14px; color: #555;
+            resize: none; box-sizing: border-box;
+        }
+        
+        /* 按鈕區塊樣式調整 */
+        .modal-btns { display: flex; gap: 10px; justify-content: center; margin-top: 5px; }
+        
+        /* 按鈕基本樣式 */
+        .btn-base { border: none; padding: 10px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; flex: 1; font-size: 14px; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+        
+        .btn-copy { background-color: #3498db; color: white; }
+        .btn-copy:active { background-color: #2980b9; }
+
+        /* 新增：IG 按鈕樣式 (Instagram 品牌色) */
+        .btn-ig { background-color: #E1306C; color: white; }
+        .btn-ig:hover { background-color: #C13584; }
+
+        .btn-close { background-color: #95a5a6; color: white; width: 100%; margin-top: 5px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🍰 12/20 甜點訂購單</h2>
+    
+    <div class="form-section">
+        <label>訂購人 IG 帳號</label>
+        <input type="text" id="username" placeholder="請輸入 IG 帳號 (例如: vicky_dessert)">
+        
+        <label>聯絡電話</label>
+        <input type="tel" id="phone" placeholder="請輸入手機號碼 (10碼)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        
+        <label>取貨地點與時間</label>
+        <select id="pickup" required>
+            <option value="" disabled selected>請選擇地點</option>
+            <option value="草屯">14:00~14:20 草屯鎮中正路停車場(草屯鎮中正路603號)</option>
+            <option value="南投">14:50~15:10 南投市三和停車場第四停車場(南投市大同街10號)</option>
+        </select>
+    </div>
+
+    <div class="product-grid" id="productList"></div>
+    <div class="spacer"></div>
+</div>
+
+<div class="footer-bar">
+    <div class="total-display" id="totalPrice">總金額: $0</div>
+    <button class="btn-submit" id="submitBtn" onclick="submitOrder()">送出訂單</button>
+</div>
+
+<div class="modal-overlay" id="successModal">
+    <div class="modal-box">
+        <div class="modal-title">🎉 訂購成功！</div>
+        <p style="font-size:14px; color:#666; margin:0;">請複製下方文字，私訊給我們確認喔！</p>
+        
+        <textarea class="copy-area" id="copyContent" readonly></textarea>
+        
+        <div class="modal-btns">
+            <button class="btn-base btn-copy" id="copyBtn" onclick="copyText()">📋 複製文字</button>
+            
+            <a href="https://www.instagram.com/mr.how_how_?igsh=MWc2MWY3bndwZzQwNA==" target="_blank" class="btn-base btn-ig">
+                💬 前往 IG 私訊
+            </a>
+        </div>
+        
+        <button class="btn-base btn-close" onclick="closeModal()">關閉視窗</button>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // ⚠️ 請確認這裡還是您的 Google Script 網址
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyBiN4ySqqJyQpR6kKM_m4l_d7FnqdJoUt44U9u5LsyovMZkbwduT9zgALOO8scwfI/exec"; 
+    // ==========================================
+
+    const products = [
+        { id: 1, name: "迷你橘子優格塔", price: 70 },
+        { id: 2, name: "迷你開心乳酪", price: 70 },
+        { id: 3, name: "迷你開心脆脆", price: 70 },
+        { id: 4, name: "迷你布朗尼", price: 25 },
+        { id: 5, name: "迷你綠葡萄優格塔", price: 65 },
+        { id: 6, name: "迷你櫻桃優格塔", price: 65 },
+        { id: 7, name: "迷你藍莓優格塔", price: 65 },
+        { id: 8, name: "迷你藍莓巧巧塔", price: 65 },
+        { id: 9, name: "迷你抹茶生乳酪", price: 50 },
+        { id: 10, name: "迷你巧巧生乳酪", price: 50 },
+        { id: 11, name: "迷你草莓優格塔", price: 65 },
+        { id: 12, name: "迷你草莓抹茶塔", price: 65 },
+        { id: 13, name: "迷你抹茶乳酪布朗尼", price: 45 },
+        { id: 14, name: "迷你巧巧乳酪布朗尼", price: 45 },
+        { id: 15, name: "迷你綠葡萄優格布朗尼", price: 45 },
+        { id: 16, name: "迷你藍莓優格布朗尼", price: 45 },
+        { id: 17, name: "迷你檸檬塔", price: 50 },
+        { id: 18, name: "迷你百香果塔", price: 50 },
+        { id: 19, name: "迷你柚子生乳酪塔", price: 50 },
+        { id: 20, name: "迷你觀音", price: 50 }
+    ];
+
+    const productList = document.getElementById('productList');
+    let cart = new Array(products.length).fill(0);
+
+    products.forEach((p, index) => {
+        const div = document.createElement('div');
+        div.className = 'product-card';
+        div.innerHTML = `
+            <img src="./images/${p.id}.png" class="product-img" alt="${p.name}">
+            <div class="product-info">
+                <div>
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-price">$${p.price}</div>
+                </div>
+                <div class="qty-control">
+                    <button class="btn-qty" onclick="updateQty(${index}, -1)">-</button>
+                    <input type="text" class="qty-input" id="qty-${index}" value="0">
+                    <button class="btn-qty" onclick="updateQty(${index}, 1)">+</button>
+                </div>
+            </div>
+        `;
+        productList.appendChild(div);
+    });
+
+    function updateQty(index, change) {
+        let newQty = cart[index] + change;
+        if (newQty < 0) newQty = 0;
+        cart[index] = newQty;
+        document.getElementById(`qty-${index}`).value = newQty;
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        let total = 0;
+        cart.forEach((qty, index) => {
+            total += qty * products[index].price;
+        });
+        document.getElementById('totalPrice').innerText = `總金額: $${total}`;
+        return total;
+    }
+
+    function submitOrder() {
+        const name = document.getElementById('username').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const pickup = document.getElementById('pickup').value;
+        const total = calculateTotal();
+
+        if (!name || !phone) {
+            alert("請填寫 IG 帳號和電話喔！");
+            return;
+        }
+
+        if (phone.length !== 10) {
+            alert("電話輸入錯誤！\n請確認手機號碼為 10 碼數字。");
+            return;
+        }
+        
+        if (pickup === "") {
+            alert("請選擇取貨地點！");
+            return;
+        }
+
+        if (total === 0) {
+            alert("您還沒有選擇任何甜點喔！");
+            return;
+        }
+
+        let orderDetails = [];
+        cart.forEach((qty, index) => {
+            if (qty > 0) {
+                orderDetails.push(`${products[index].name} x${qty}`);
+            }
+        });
+        const orderString = orderDetails.join("\n");
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = "訂單傳送中...";
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&pickup=${encodeURIComponent(pickup)}&orderDetails=${encodeURIComponent(orderString)}&totalPrice=${total}`
+        }).then(() => {
+            showSuccessModal(name, pickup, orderString, total);
+            btn.disabled = false;
+            btn.innerText = "送出訂單";
+        }).catch(error => {
+            alert("發生錯誤，請稍後再試或聯繫管理員。");
+            btn.disabled = false;
+            btn.innerText = "送出訂單";
+        });
+    }
+
+    function showSuccessModal(igAccount, pickup, orderString, total) {
+        const modal = document.getElementById('successModal');
+        const textarea = document.getElementById('copyContent');
+        const btn = document.getElementById('copyBtn');
+        
+        const message = `哈囉！我的 IG 是 ${igAccount}\n我剛剛送出了甜點訂單：\n\n${orderString}\n\n總金額：$${total}\n取貨地點：${pickup}\n\n請幫我確認訂單，謝謝！`;
+        
+        textarea.value = message;
+        btn.innerText = "📋 複製文字"; 
+        btn.style.backgroundColor = "#3498db"; // 重置顏色
+        modal.style.display = 'flex';
+    }
+
+    function copyText() {
+        const textarea = document.getElementById('copyContent');
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            const btn = document.getElementById('copyBtn');
+            btn.innerText = "✅ 已複製！";
+            btn.style.backgroundColor = "#27ae60";
+        }).catch(err => {
+            alert("複製失敗，請手動選取文字複製");
+        });
+    }
+
+    function closeModal() {
+        document.getElementById('successModal').style.display = 'none';
+        location.reload(); 
+    }
+</script>
+
+</body>
+</html>
