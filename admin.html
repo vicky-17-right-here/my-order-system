@@ -19,44 +19,68 @@
         /* 登入遮罩 */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-green); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         .login-box { background: white; padding: 30px; border-radius: 10px; text-align: center; width: 300px;}
-        .login-box input { width: 100%; padding: 10px; margin: 10px 0; font-size: 16px; box-sizing: border-box;}
-        .login-box button { width: 100%; padding: 10px; background: var(--main-red); color: white; border: none; cursor: pointer; font-size: 16px; border-radius: 5px;}
+        .login-box input { width: 100%; padding: 10px; margin: 10px 0; }
+        .login-box button { width: 100%; padding: 10px; background: var(--main-red); color: white; border: none; cursor: pointer; border-radius: 5px;}
 
         h1 { text-align: center; color: var(--main-green); margin-bottom: 20px; }
 
-        /* 統計儀表板 */
-        .dashboard-stats { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;}
-        .stat-card { flex: 1; background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; min-width: 200px; border-top: 4px solid var(--gold); }
-        .stat-number { font-size: 32px; font-weight: bold; color: var(--main-red); margin: 10px 0; }
+        /* 統計儀表板 (現在只有總訂單數在頂部) */
+        .dashboard-stats { display: flex; gap: 20px; margin-bottom: 20px; justify-content: center;}
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; min-width: 200px; border-top: 4px solid var(--gold); }
+        .stat-number { font-size: 32px; font-weight: bold; color: var(--main-green); margin: 10px 0; }
         .stat-label { color: #666; font-size: 14px; }
+        .revenue-text { color: var(--main-red); }
 
-        /* 切換標籤 */
+        /* 標籤切換 */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
         .tab-btn { padding: 10px 25px; border: none; background: #ddd; cursor: pointer; border-radius: 20px; font-weight: bold; font-size: 16px; }
         .tab-btn.active { background: var(--main-green); color: white; }
 
-        /* 內容區域 */
         .view-section { display: none; }
         .view-section.active { display: block; }
 
-        /* 1. 訂單列表視圖 */
+        /* 訂單列表 */
         .order-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .order-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid var(--main-green); position: relative; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-        .card-ig { font-weight: bold; font-size: 18px; color: var(--main-green); }
-        .card-pickup { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
-        .card-items { font-size: 14px; line-height: 1.6; color: #555; background: #fafafa; padding: 10px; border-radius: 5px; }
-        .card-footer { margin-top: 10px; display: flex; justify-content: space-between; font-weight: bold; align-items: center; }
-        .card-price { color: var(--main-red); font-size: 20px; }
-        .card-phone { font-size: 12px; color: #999; }
-        .card-time { font-size: 12px; color: #ccc; position: absolute; top: 10px; right: 10px; display: none;} /* 隱藏時間保持簡潔 */
+        .order-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #ccc; position: relative; cursor: pointer; transition: transform 0.2s; }
+        .order-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        /* 已確認的樣式 */
+        .order-card.confirmed { border-left: 5px solid var(--main-green); }
+        .badge-confirmed { position: absolute; top: 10px; right: 10px; background: var(--main-green); color: white; font-size: 12px; padding: 3px 8px; border-radius: 10px; display: none; }
+        .order-card.confirmed .badge-confirmed { display: block; }
 
-        /* 2. 製作統計表格 */
-        .production-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card-header { font-weight: bold; font-size: 18px; color: #333; margin-bottom: 5px; }
+        .card-pickup { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 10px;}
+        .card-items { font-size: 14px; line-height: 1.6; color: #555; background: #fafafa; padding: 10px; border-radius: 5px; max-height: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+        
+        /* 統計表格 */
+        .production-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px;}
         .production-table th, .production-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         .production-table th { background-color: var(--main-green); color: white; }
-        .production-table tr:last-child td { border-bottom: none; }
         .qty-highlight { font-weight: bold; color: var(--main-red); font-size: 18px; }
+
+        /* --- 詳細視窗與編輯介面 --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; width: 90%; max-width: 600px; border-radius: 15px; padding: 25px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative;}
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #999; }
+        
+        .detail-row { margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .detail-label { font-weight: bold; color: var(--main-green); display: block; margin-bottom: 5px; }
+        .detail-content { color: #333; }
+        .detail-list { background: #f9f9f9; padding: 15px; border-radius: 8px; }
+
+        .action-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-confirm { flex: 1; padding: 12px; background: var(--main-green); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-modify { flex: 1; padding: 12px; background: var(--gold); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-save { width: 100%; padding: 12px; background: var(--main-red); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px;}
+        
+        /* 編輯模式下的產品列表 */
+        .edit-product-list { display: grid; gap: 10px; margin-top: 10px; }
+        .edit-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 5px; }
+        .edit-item-name { font-weight: bold; font-size: 14px; }
+        .edit-controls { display: flex; align-items: center; gap: 10px; }
+        .edit-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ccc; background: white; cursor: pointer; }
+        .edit-qty { width: 30px; text-align: center; border: none; font-weight: bold; }
+
     </style>
 </head>
 <body>
@@ -64,7 +88,7 @@
 <div id="login-overlay">
     <div class="login-box">
         <h2 style="color: #165b33;">商家後台登入</h2>
-        <input type="password" id="passwordInput" placeholder="請輸入密碼">
+        <input type="password" id="passwordInput" placeholder="請輸入密碼 (1220)">
         <button onclick="checkLogin()">登入</button>
         <p id="errorMsg" style="color:red; display:none; margin-top:10px;">密碼錯誤</p>
     </div>
@@ -73,158 +97,351 @@
 <div class="container" id="main-content" style="display:none;">
     <h1>🎄 訂單管理儀表板</h1>
 
-    <div class="dashboard-stats">
-        <div class="stat-card">
-            <div class="stat-label">總訂單數</div>
-            <div class="stat-number" id="totalOrders">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">總營業額</div>
-            <div class="stat-number" id="totalRevenue">$0</div>
-        </div>
-    </div>
-
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('list')">📋 訂單檢視</button>
         <button class="tab-btn" onclick="switchTab('production')">🍰 製作統計</button>
     </div>
 
     <div id="view-list" class="view-section active">
-        <div id="loading" style="text-align:center; color:#666;">資料讀取中...</div>
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-label">總訂單數</div>
+                <div class="stat-number" id="totalOrders">0</div>
+            </div>
+        </div>
+        <div id="loading" style="text-align:center; color:#666; margin-top:20px;">資料讀取中...</div>
         <div class="order-list" id="orderContainer"></div>
     </div>
 
     <div id="view-production" class="view-section">
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-label">總營業額</div>
+                <div class="stat-number revenue-text" id="totalRevenue">$0</div>
+            </div>
+        </div>
+        
         <table class="production-table">
-            <thead>
-                <tr>
-                    <th>產品名稱</th>
-                    <th>總數量</th>
-                </tr>
-            </thead>
-            <tbody id="productionBody">
-                </tbody>
+            <thead><tr><th>產品名稱</th><th>總數量</th></tr></thead>
+            <tbody id="productionBody"></tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal-overlay" id="detailModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+        <h2 id="modalTitle" style="color:var(--main-green); text-align:center;">訂單詳情</h2>
+        
+        <div id="viewMode">
+            <div class="detail-row">
+                <span class="detail-label">訂購人 IG / 電話</span>
+                <span class="detail-content" id="d-name"></span> / <span class="detail-content" id="d-phone"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">取貨地點</span>
+                <span class="detail-content" id="d-pickup"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">目前狀態</span>
+                <span class="detail-content" id="d-status" style="font-weight:bold;"></span>
+            </div>
+            <div class="detail-label">訂購內容：</div>
+            <div class="detail-list" id="d-list"></div>
+            <div style="text-align:right; font-size:20px; font-weight:bold; color:var(--main-red); margin-top:10px;">
+                總計: <span id="d-price"></span>
+            </div>
+
+            <div class="action-btns">
+                <button id="btnConfirm" class="btn-confirm" onclick="confirmOrder()">✅ 確認訂單</button>
+                <button class="btn-modify" onclick="enableEditMode()">✏️ 修改訂單</button>
+            </div>
+        </div>
+
+        <div id="editMode" style="display:none;">
+            <h3 style="text-align:center; color:#666;">修改訂購內容</h3>
+            <div class="edit-product-list" id="editListContainer"></div>
+            <div style="text-align:right; font-size:18px; font-weight:bold; margin-top:15px;">
+                預估新金額: $<span id="edit-total-price">0</span>
+            </div>
+            <button class="btn-save" id="btnSave" onclick="saveEditedOrder()">💾 儲存修改</button>
+            <button style="width:100%; padding:10px; background:#ccc; border:none; border-radius:5px; margin-top:10px; cursor:pointer;" onclick="cancelEdit()">取消修改</button>
+        </div>
+
     </div>
 </div>
 
 <script>
     // ==========================================
-    // ⚠️ 請換成您剛剛「重新部署」後的 Apps Script 網址
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsivpORW1vi3zrac7T9qMuRfiSGkwRIRKasqy2GXDsZuGnx4MdEOFWtdWUP1RwRRVH/exec"; 
+    // ⚠️ 請換成您新部署的 Google Script 網址
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6H3iR0u325eXhY7wJ3-x9Xn5jX8Z6oP4qL2eT1yU7i5mR9w/exec"; 
     // ==========================================
 
-    const PASSWORD = "1220"; // 設定後台密碼
+    // 產品資料 (必須跟 index.html 一樣)
+    const products = [
+        { id: 1, name: "迷你橘子優格塔", price: 70 },
+        { id: 2, name: "迷你開心乳酪", price: 70 },
+        { id: 3, name: "迷你開心脆脆", price: 70 },
+        { id: 4, name: "迷你布朗尼", price: 25 },
+        { id: 5, name: "迷你綠葡萄優格塔", price: 65 },
+        { id: 6, name: "迷你櫻桃優格塔", price: 65 },
+        { id: 7, name: "迷你藍莓優格塔", price: 65 },
+        { id: 8, name: "迷你藍莓巧巧塔", price: 65 },
+        { id: 9, name: "迷你抹茶生乳酪", price: 50 },
+        { id: 10, name: "迷你巧巧生乳酪", price: 50 },
+        { id: 11, name: "迷你草莓優格塔", price: 65 },
+        { id: 12, name: "迷你草莓抹茶塔", price: 65 },
+        { id: 13, name: "迷你抹茶乳酪布朗尼", price: 45 },
+        { id: 14, name: "迷你巧巧乳酪布朗尼", price: 45 },
+        { id: 15, name: "迷你綠葡萄優格布朗尼", price: 45 },
+        { id: 16, name: "迷你藍莓優格布朗尼", price: 45 },
+        { id: 17, name: "迷你檸檬塔", price: 50 },
+        { id: 18, name: "迷你百香果塔", price: 50 },
+        { id: 19, name: "迷你柚子生乳酪塔", price: 50 },
+        { id: 20, name: "迷你觀音", price: 50 }
+    ];
+
+    const PASSWORD = "1220";
+    let allOrders = []; // 存所有訂單
+    let currentOrder = null; // 當前正在看的訂單
+    let editCart = []; // 編輯模式下的購物車
 
     function checkLogin() {
-        const input = document.getElementById('passwordInput').value;
-        if (input === PASSWORD) {
+        if (document.getElementById('passwordInput').value === PASSWORD) {
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
-            fetchData(); // 登入成功才抓資料
+            fetchData();
         } else {
             document.getElementById('errorMsg').style.display = 'block';
         }
     }
 
-    // 抓取資料
     function fetchData() {
         fetch(SCRIPT_URL)
             .then(res => res.json())
             .then(data => {
+                allOrders = data.reverse(); // 最新的在前面
                 document.getElementById('loading').style.display = 'none';
-                renderDashboard(data);
+                renderDashboard();
             })
-            .catch(err => {
-                alert("讀取失敗，請確認網址是否正確");
-            });
+            .catch(err => alert("讀取失敗"));
     }
 
-    function renderDashboard(orders) {
-        // 反轉訂單，讓最新的顯示在最上面
-        orders.reverse();
-
+    function renderDashboard() {
         const orderContainer = document.getElementById('orderContainer');
         const productionBody = document.getElementById('productionBody');
         
         let totalRev = 0;
         let productCounts = {};
 
-        // 清空容器
         orderContainer.innerHTML = '';
         productionBody.innerHTML = '';
 
-        orders.forEach(order => {
-            // 1. 計算總營收
-            // 確保 price 是數字 (有些可能是字串)
+        allOrders.forEach((order, index) => {
             let price = parseInt(order.price) || 0;
             totalRev += price;
 
-            // 2. 建立訂單卡片
-            // 處理換行符號，讓卡片顯示漂亮
-            let detailsHtml = order.details.replace(/\n/g, '<br>');
-            
+            // 處理狀態樣式
+            let isConfirmed = order.status === "已確認";
+            let cardClass = isConfirmed ? "order-card confirmed" : "order-card";
+            let detailsHtml = order.details.replace(/\n/g, ', '); // 列表縮略顯示
+
             const card = document.createElement('div');
-            card.className = 'order-card';
+            card.className = cardClass;
+            // 點擊卡片開啟詳細視窗，傳入 index
+            card.onclick = () => openDetailModal(index);
+            
             card.innerHTML = `
-                <div class="card-header">
-                    <span class="card-ig">@${order.name}</span>
-                    <span class="card-pickup">${order.pickup}</span>
-                </div>
+                <div class="badge-confirmed">已確認</div>
+                <div class="card-header">@${order.name}</div>
+                <div class="card-pickup">${order.pickup}</div>
                 <div class="card-items">${detailsHtml}</div>
-                <div class="card-footer">
-                    <span class="card-phone">📞 ${order.phone}</span>
-                    <span class="card-price">$${price}</span>
+                <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold;">
+                    <span style="color:#999;">📞 ${order.phone}</span>
+                    <span style="color:var(--main-red);">$${price}</span>
                 </div>
             `;
             orderContainer.appendChild(card);
 
-            // 3. 統計產品數量邏輯
-            // 訂單內容格式通常是: "產品名 x數量"
-            // 我們依換行拆分
+            // 統計數量
             let items = order.details.split('\n');
             items.forEach(item => {
-                // 使用 Regex 分離名稱和數量
-                // 假設格式為 "迷你橘子優格塔 x2"
                 let parts = item.split(' x');
                 if (parts.length === 2) {
                     let pName = parts[0].trim();
                     let pQty = parseInt(parts[1]) || 0;
-                    
-                    if (productCounts[pName]) {
-                        productCounts[pName] += pQty;
-                    } else {
-                        productCounts[pName] = pQty;
-                    }
+                    productCounts[pName] = (productCounts[pName] || 0) + pQty;
                 }
             });
         });
 
-        // 更新頂部數字
-        document.getElementById('totalOrders').innerText = orders.length;
+        document.getElementById('totalOrders').innerText = allOrders.length;
         document.getElementById('totalRevenue').innerText = "$" + totalRev;
 
-        // 渲染製作統計表格
-        // 將物件轉為陣列並排序 (數量多的排前面)
-        let sortedProducts = Object.keys(productCounts).map(key => {
-            return { name: key, count: productCounts[key] };
-        }).sort((a, b) => b.count - a.count); // 數量大到小排序
+        // 渲染統計表
+        Object.keys(productCounts)
+            .sort((a, b) => productCounts[b] - productCounts[a])
+            .forEach(name => {
+                productionBody.innerHTML += `<tr><td>${name}</td><td class="qty-highlight">${productCounts[name]}</td></tr>`;
+            });
+    }
 
-        sortedProducts.forEach(p => {
-            let row = `<tr>
-                <td>${p.name}</td>
-                <td class="qty-highlight">${p.count}</td>
-            </tr>`;
-            productionBody.innerHTML += row;
+    // --- 詳細視窗邏輯 ---
+    function openDetailModal(index) {
+        currentOrder = allOrders[index];
+        document.getElementById('detailModal').style.display = 'flex';
+        document.getElementById('viewMode').style.display = 'block';
+        document.getElementById('editMode').style.display = 'none';
+
+        // 填入資料
+        document.getElementById('d-name').innerText = currentOrder.name;
+        document.getElementById('d-phone').innerText = currentOrder.phone;
+        document.getElementById('d-pickup').innerText = currentOrder.pickup;
+        document.getElementById('d-status').innerText = currentOrder.status;
+        document.getElementById('d-status').style.color = currentOrder.status === "已確認" ? "green" : "red";
+        document.getElementById('d-price').innerText = "$" + currentOrder.price;
+        document.getElementById('d-list').innerHTML = currentOrder.details.replace(/\n/g, '<br>');
+
+        // 如果已確認，隱藏確認按鈕 (或顯示已確認文字)
+        const btnConf = document.getElementById('btnConfirm');
+        if (currentOrder.status === "已確認") {
+            btnConf.style.display = 'none';
+        } else {
+            btnConf.style.display = 'inline-block';
+        }
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    // --- 確認訂單 ---
+    function confirmOrder() {
+        if (!confirm("確定要將此訂單標記為「已確認」嗎？")) return;
+        
+        const btn = document.getElementById('btnConfirm');
+        btn.innerText = "⏳ 處理中...";
+        btn.disabled = true;
+
+        // 呼叫 Apps Script action=confirm
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `action=confirm&name=${encodeURIComponent(currentOrder.name)}&phone=${encodeURIComponent(currentOrder.phone)}`
+        }).then(() => {
+            alert("訂單已確認！");
+            closeDetailModal();
+            fetchData(); // 重新整理資料
+        });
+    }
+
+    // --- 修改模式邏輯 ---
+    function enableEditMode() {
+        document.getElementById('viewMode').style.display = 'none';
+        document.getElementById('editMode').style.display = 'block';
+        
+        // 1. 初始化 editCart (根據現有產品列表)
+        // 為了讓刪除方便，我們顯示所有產品，但數量根據訂單內容預填
+        editCart = new Array(products.length).fill(0);
+        
+        // 解析訂單字串回填數量 "產品A x2"
+        let lines = currentOrder.details.split('\n');
+        lines.forEach(line => {
+            let parts = line.split(' x');
+            if (parts.length === 2) {
+                let pName = parts[0].trim();
+                let pQty = parseInt(parts[1]);
+                // 找到對應的產品索引
+                let pIndex = products.findIndex(p => p.name === pName);
+                if (pIndex !== -1) editCart[pIndex] = pQty;
+            }
+        });
+
+        renderEditList();
+    }
+
+    function renderEditList() {
+        const container = document.getElementById('editListContainer');
+        container.innerHTML = '';
+        let total = 0;
+
+        products.forEach((p, index) => {
+            let qty = editCart[index];
+            total += qty * p.price;
+
+            // 只顯示有數量的，或者全部顯示？需求說「顯示出所有產品」，這樣才能新增
+            let row = document.createElement('div');
+            row.className = 'edit-item';
+            row.innerHTML = `
+                <div class="edit-item-name">${p.name} ($${p.price})</div>
+                <div class="edit-controls">
+                    <button class="edit-btn" onclick="changeEditQty(${index}, -1)">-</button>
+                    <input class="edit-qty" value="${qty}" readonly>
+                    <button class="edit-btn" onclick="changeEditQty(${index}, 1)">+</button>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+        document.getElementById('edit-total-price').innerText = total;
+    }
+
+    function changeEditQty(index, delta) {
+        let newQty = editCart[index] + delta;
+        if (newQty < 0) newQty = 0; // 0 就是刪除/沒點
+        editCart[index] = newQty;
+        renderEditList(); // 重新渲染更新總價和數字
+    }
+
+    function cancelEdit() {
+        document.getElementById('viewMode').style.display = 'block';
+        document.getElementById('editMode').style.display = 'none';
+    }
+
+    function saveEditedOrder() {
+        // 組裝新的訂單字串
+        let newDetails = [];
+        let newTotal = 0;
+        
+        products.forEach((p, index) => {
+            let qty = editCart[index];
+            if (qty > 0) {
+                newDetails.push(`${p.name} x${qty}`);
+                newTotal += qty * p.price;
+            }
+        });
+
+        if (newDetails.length === 0) {
+            alert("訂單不能為空！");
+            return;
+        }
+
+        const orderString = newDetails.join("\n");
+        const btn = document.getElementById('btnSave');
+        btn.innerText = "⏳ 儲存中...";
+        btn.disabled = true;
+
+        // 呼叫 Apps Script action=update
+        // 使用 originalName 和 originalPhone 來定位原訂單
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `action=update&originalName=${encodeURIComponent(currentOrder.name)}&originalPhone=${encodeURIComponent(currentOrder.phone)}&orderDetails=${encodeURIComponent(orderString)}&totalPrice=${newTotal}`
+        }).then(() => {
+            alert("修改成功！");
+            closeDetailModal();
+            fetchData(); // 重新整理
+        }).catch(() => {
+            alert("修改失敗");
+            btn.disabled = false;
+            btn.innerText = "💾 儲存修改";
         });
     }
 
     function switchTab(tabName) {
-        // 切換按鈕樣式
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
-
-        // 切換內容顯示
         document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
         document.getElementById('view-' + tabName).classList.add('active');
     }
