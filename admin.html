@@ -72,7 +72,7 @@
         .btn-confirm { flex: 1; padding: 12px; background: var(--main-green); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-modify { flex: 1; padding: 12px; background: var(--gold); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-save { width: 100%; padding: 12px; background: var(--main-red); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px;}
-        .btn-save:disabled { background: #ccc; cursor: not-allowed; } /* 增加 disabled 樣式 */
+        .btn-save:disabled { background: #ccc; cursor: not-allowed; } 
         
         /* 編輯模式下的產品列表 */
         .edit-product-list { display: grid; gap: 10px; margin-top: 10px; }
@@ -174,7 +174,7 @@
 
 <script>
     // ==========================================
-    // ⚠️ 請確認這裡還是您的 Google Script 網址
+    // ⚠️ 已經更新為您提供的最新網址
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7SG7jf-_xyCTqYCyg3aPS06CKvOjsq-G3PU_qbcN4H11yHz5jdBBBsnKmibw-bPYX/exec"; 
     // ==========================================
 
@@ -224,7 +224,10 @@
                 document.getElementById('loading').style.display = 'none';
                 renderDashboard();
             })
-            .catch(err => alert("讀取失敗"));
+            .catch(err => {
+                console.error(err);
+                alert("讀取失敗，請確認網址是否正確或稍後再試。");
+            });
     }
 
     function renderDashboard() {
@@ -336,7 +339,6 @@
         document.getElementById('viewMode').style.display = 'none';
         document.getElementById('editMode').style.display = 'block';
         
-        // 修正重點：進入編輯模式時，強制重置按鈕狀態
         const btnSave = document.getElementById('btnSave');
         btnSave.innerText = "💾 儲存修改";
         btnSave.disabled = false;
@@ -423,7 +425,6 @@
         }).then(() => {
             alert("修改成功！");
             
-            // 修正重點：成功後立即解鎖按鈕
             btn.innerText = "💾 儲存修改";
             btn.disabled = false;
             
@@ -431,7 +432,6 @@
             fetchData(); 
         }).catch(() => {
             alert("修改失敗");
-            // 修正重點：失敗時也要解鎖
             btn.disabled = false;
             btn.innerText = "💾 儲存修改";
         });
